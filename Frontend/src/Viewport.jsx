@@ -1,9 +1,11 @@
 import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, PerspectiveCamera, Helper, useHelper } from '@react-three/drei'
+import { OrbitControls, PerspectiveCamera } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
 import * as THREE from 'three'
+import { useSelector } from "react-redux";
 
 import BasePlane from './ThreeComponent/BasePlane.jsx'
+import EmptyPlane from './ThreeComponent/EmptyPlace.jsx'
 
 const SceneBackground = () => {
     const { scene } = useThree();
@@ -12,19 +14,20 @@ const SceneBackground = () => {
 }
 
 const Viewport = () => {
+    const stepPageJsonData = useSelector(state => state.data.stepPageJsonData)
 
 
     return (
         <div className='bg-black w-full h-full'>
             <Canvas>
                 <PerspectiveCamera makeDefault position={[0, 125, 125]} />
-                <ambientLight intensity={10}/>
+                <ambientLight intensity={10} color='white'/>
                 <mesh>
                     <boxGeometry args={[1, 1, 1]} />
-                    <meshStandardMaterial color='red' />
+                    <meshStandardMaterial color='#aa0000' />
                 </mesh>
-                <BasePlane />
-                <OrbitControls maxPolarAngle={90}/>
+                { (stepPageJsonData['leftPanelStepAt'] === 'projectSetup') ? <EmptyPlane />: <BasePlane />}
+                <OrbitControls maxPolarAngle={90} zoomSpeed={3}/>
                 <SceneBackground />
             </Canvas>
         </div>
