@@ -1,12 +1,18 @@
 import { useRef } from 'react'
 import * as THREE from 'three'
 import { ImprovedNoise } from 'three/addons/math/ImprovedNoise.js';
+import { useModifyData } from '../../useChangeData';
+import { useSelector } from "react-redux";
 
 const BasePlane = () => {
+    const stepPageJsonData = useSelector(state => state.data.stepPageJsonData)
+    const modifyData = useModifyData();
     const meshRef = useRef()
-    const worldWidth = 200, worldDepth = 200
-
+    const worldWidth = stepPageJsonData['worldWidth']
+    const worldDepth = stepPageJsonData['worldDepth']
+    
     const data = generateHeight(worldWidth, worldDepth)
+    console.log(data)
 
     const geometry = new THREE.PlaneGeometry(worldWidth, worldDepth, worldWidth - 1, worldDepth - 1)
     const vertices = geometry.attributes.position.array
@@ -21,26 +27,31 @@ const BasePlane = () => {
     texture.wrapS = THREE.ClampToEdgeWrapping;
     texture.wrapT = THREE.ClampToEdgeWrapping;
     texture.colorSpace = THREE.SRGBColorSpace;
-
-    // console.log(texture)
     
 
     function generateHeight( width, height ) {
         const size = width * height;
         const data = new Uint8Array( size )
-        const perlin = new ImprovedNoise()
-        const z = Math.random() * 10;
+        if (!stepPageJsonData['flatWorld']) {
+            const perlin = new ImprovedNoise()
+            const z = Math.random() * 10;
 
-        let quality = 1;
-        for ( let j = 0; j < 4; j ++ ) {
-            for ( let i = 0; i < size; i ++ ) {
-                const x = i % width, y = ~ ~ ( i / width );
-                data[ i ] += Math.abs( perlin.noise( x / quality, y / quality, z ) * quality * 1.75);
+            let quality = 1;
+            for ( let j = 0; j < 4; j ++ ) {
+                for ( let i = 0; i < size; i ++ ) {
+                    const x = i % width, y = ~ ~ ( i / width );
+                    data[ i ] += Math.abs( perlin.noise( x / quality, y / quality, z ) * quality * 1.75);
+                }
+                quality *= 5;
             }
-            quality *= 5;
-        }
 
-        return data;
+            return data;
+        } else {
+            for ( let i = 0; i < size; i ++ ) {
+                data[i] = 0
+            }
+            return data
+        }
     }
 
     function generateTexture( data, width, height ) {
@@ -76,16 +87,6 @@ const BasePlane = () => {
             imageData[ i + 2 ] = ( shade * 96 ) * 0.5 + 30;
         }
         context.putImageData( image, 0, 0 );
-
-        // let dataUrl = canvas.toDataURL();
-
-        // let link = document.createElement('a');
-        // link.download = 'texture.png';
-        // link.href = dataUrl;
-
-        // document.body.appendChild(link);
-        // link.click();
-        // document.body.removeChild(link);
 
         // Scaled 4x
         const canvasScaled = document.createElement( 'canvas' );

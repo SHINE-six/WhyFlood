@@ -1,0 +1,30 @@
+{
+    "worldWidth": 200,
+    "worldDepth": 200,
+    "flatWorld": false,
+    "leftPanel": true,
+    "rightPanel": true,
+    "leftPanelWidth": 300,
+    "rightPanelWidth": 300,
+    "leftPanelStepAt": "projectSetup",
+    "leftPanelSteps": [
+        {
+            "type": "initializePhase",
+            "settingTitle": "projectSetup",
+            "title": "Project Setup",
+            "description": "This is the start of a new project"
+        },
+        {
+            "type": "buildingPhase",
+            "settingTitle": "importModel",
+            "title": "Import Model",
+            "description": "Import a model to your project"
+        },
+        {
+            "type": "buildingPhase",
+            "settingTitle": "placeholderAndEdit",
+            "title": "Placeholder and Edit",
+            "description": "Placeholder and Edit"
+        }
+    ]
+}
